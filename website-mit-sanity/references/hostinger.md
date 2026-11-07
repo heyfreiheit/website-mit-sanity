@@ -30,11 +30,12 @@ Den Menüpunkt „Erweitert“ und dort „Git“ im Website-Dashboard **nicht**
 
    Der Pfad im Entry file ist relativ zum Ausgabeordner, also nicht `dist/server/entry.mjs`. Ein Feld für einen Start-Befehl gibt es nicht, den Port setzt Hostinger über `PORT`.
 
-4. Unter **Environment variables** `SANITY_API_READ_TOKEN` eintragen. Am einfachsten über „Import .env“ mit der lokalen `.env`. Werte gibt der Nutzer selbst ein, nie in den Chat.
+4. Unter **Environment variables** `SANITY_API_READ_TOKEN` eintragen. Am einfachsten über „Import .env“ mit der lokalen `.env`. Werte gibt der Nutzer selbst ein, nie in den Chat. Die Seite liest den Token erst beim Start (`process.env`), er steckt also nie im Build. Nach dem Eintragen die App neu starten oder neu deployen.
 5. **Deploy.** Ab jetzt baut jeder Push auf `main` neu. Inhalte aus Sanity brauchen keinen Push.
 6. Zuerst die vorläufige Hostinger-Adresse nehmen. Ist die Domain im Tarif schon als normale Website angelegt, muss diese vorher entfernt werden, sonst lässt sie sich der Web-App nicht zuweisen.
 
 Gut zu wissen:
+- Die Hostinger-GitHub-App ist mit genau einem GitHub-Account oder einer Organisation verbunden. Das Repo muss dort liegen. Liegt es woanders, mit `gh api -X POST repos/<alt>/<repo>/transfer -f new_owner=<org>` übertragen (Verlauf bleibt, alter Link leitet weiter) und lokal `git remote set-url` anpassen. Ist die App nur für ausgewählte Repos freigegeben, das neue Repo in den GitHub-App-Einstellungen dazunehmen.
 - Ein GitHub-Account pro Hosting-Tarif, den teilen sich alle Web-Apps darin.
 - Installieren und Bauen haben je 15 Minuten Zeit, die Logs der letzten 10 Builds stehen im Dashboard.
 - Eine Node-App schläft ohne Besucher ein. Der erste Aufruf nach einer Pause dauert ein paar Sekunden. Das dem Nutzer vorher sagen.
@@ -57,6 +58,21 @@ Mit der Live-Adresse (vorläufig oder Domain):
 4. Prüfen: `https://domain.de`, `https://www.domain.de` und `http://domain.de` landen auf derselben `https`-Adresse.
 
 ## Abschlusstest
+
+Zuerst ohne Login per Befehl:
+
+```bash
+U=<LIVE_URL>
+curl -s -w " (%{http_code})\n" $U/api/draft-mode/enable/
+# „Invalid secret (401)“: Token ist gesetzt. „not configured (500)“: Variable fehlt in Hostinger.
+cd studio && npx sanity exec scripts/set-field.ts --with-user-token -- home heroTitle.de "TEST"
+start=$(date +%s); until curl -s "$U/de/" | grep -q TEST; do sleep 1; done; echo "online nach $(( $(date +%s)-start ))s"
+npx sanity exec scripts/set-field.ts --with-user-token -- home heroTitle.de "<alter Text>"
+```
+
+Zehn Sekunden oder weniger ist richtig. Deutlich mehr heißt: Es läuft noch ein alter Stand, oder `useCdn` steht auf `true`. Antwort-Header prüfen: `x-hcdn-cache-status: DYNAMIC` heißt, Hostinger cacht die Seite nicht.
+
+Dann mit dem Nutzer:
 
 1. Im Online-Studio einen Text ändern und veröffentlichen.
 2. Live-Seite nach etwa zehn Sekunden neu laden: Änderung ist da.

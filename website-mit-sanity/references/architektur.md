@@ -2,7 +2,7 @@
 
 Die Seite ist ein Astro-Projekt, das als kleiner Node-Server läuft. Jeder Aufruf lädt die Inhalte aus Sanity. Das hat drei Folgen, die den ganzen Aufbau bestimmen:
 
-- Eine Veröffentlichung im Studio ist nach Sekunden online. Es gibt keinen Neubau, keinen Webhook und keine GitHub Action für Inhalte.
+- Eine Veröffentlichung im Studio ist nach höchstens zehn Sekunden online. Es gibt keinen Neubau, keinen Webhook und keine GitHub Action für Inhalte. Dafür liest `content.ts` die direkte Sanity-API mit einem eigenen Zehn-Sekunden-Zwischenspeicher. Das Sanity-API-CDN (`useCdn: true`) lieferte im Test Änderungen rund eine Minute zu spät.
 - Das Studio kann die echte Seite im Reiter „Presentation“ anzeigen, mit Entwürfen und anklickbaren Feldern (siehe `visual-editing.md`).
 - Der Hoster muss Node.js können. Bei Hostinger heißt das Web Unlimited oder Cloud (siehe `hostinger.md`).
 

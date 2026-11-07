@@ -1,7 +1,7 @@
 // The only place that loads content. Pages import from here, never from Sanity
 // or the seed file directly.
 //
-// Visitors get published documents (Sanity CDN, cached here for a few seconds).
+// Visitors get published documents (direct Sanity API, cached here for ten seconds).
 // Draft mode (Studio → Presentation) gets drafts with invisible edit markers
 // ("stega") on every translatable text, so the overlays know which field it is.
 // Without a project id the site runs on cms/seed/seed.json.
@@ -28,7 +28,9 @@ const DOC_TYPES = ['settings', 'home', 'page', 'service', 'post']
 const envId = import.meta.env.PUBLIC_SANITY_PROJECT_ID as string | undefined
 const projectId = envId !== undefined ? envId : SANITY_PROJECT.projectId
 const dataset = (import.meta.env.PUBLIC_SANITY_DATASET as string | undefined) || SANITY_PROJECT.dataset
-const token = import.meta.env.SANITY_API_READ_TOKEN as string | undefined
+// Read at runtime: hosts like Hostinger set environment variables when the app starts,
+// not while it is built, and the token never ends up in the build. The dev server reads .env.
+const token = (import.meta.env.DEV ? import.meta.env.SANITY_API_READ_TOKEN : process.env.SANITY_API_READ_TOKEN) as string | undefined
 export const STUDIO_URL = (import.meta.env.PUBLIC_SANITY_STUDIO_URL as string | undefined) || SANITY_PROJECT.studioUrl
 
 export const usingSanity = Boolean(projectId)
@@ -36,7 +38,9 @@ const API_VERSION = '2026-11-01'
 const isLocaleKey = (seg: unknown) => (LOCALES as readonly unknown[]).includes(seg)
 
 const publishedClient = projectId
-  ? createClient({projectId, dataset, apiVersion: API_VERSION, useCdn: true, perspective: 'published'})
+  ? // Direct API, not the API CDN: the CDN serves a publish up to a minute late.
+    // The small cache below keeps the number of requests low anyway.
+    createClient({projectId, dataset, apiVersion: API_VERSION, useCdn: false, perspective: 'published'})
   : null
 
 /** Reads drafts. Only exists when a read token is configured. */
