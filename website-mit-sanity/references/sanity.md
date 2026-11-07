@@ -20,7 +20,7 @@ Ein eigenes Projekt in einer eigenen Organisation pro Kunde. So sehen Teamkolleg
 
 ```bash
 npx sanity organizations list
-npx sanity organizations create --name "<Kunde>"      # zeigt die ID, z. B. owng2w1o4
+npx sanity organizations create --name "<Kunde>"      # zeigt die ID, z. B. ab1cd2ef3
 ```
 
 Wenn der Nutzer das Projekt lieber in eine bestehende Organisation legen will, dessen ID nehmen. Frag, statt es zu raten.
