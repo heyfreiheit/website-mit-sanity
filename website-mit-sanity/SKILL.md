@@ -94,7 +94,24 @@ Abgeschriebene Inhalte alter Seiten enthalten manchmal öffentliche Schlüssel (
 
 ## Phase 6: Hostinger
 
-Lies `$SK/references/hostinger.md`. Der Nutzer legt im hPanel eine Node.js-Web-App aus GitHub an (Entry file `server/entry.mjs`, Umgebungsvariable `SANITY_API_READ_TOKEN` per „Import .env“). Mit der Live-Adresse: `LIVE_URL` in `presentation.ts`, CORS, Studio neu deployen. Abschlusstest: im Online-Studio veröffentlichen und online sehen, Presentation auf der Live-Seite benutzen.
+Lies `$SK/references/hostinger.md`. Der Nutzer legt im hPanel eine Node.js-Web-App aus GitHub an (Entry file `server/entry.mjs`).
+
+**Pflichtschritt, wird leicht vergessen: die Umgebungsvariable `SANITY_API_READ_TOKEN` in der Web-App.** Ohne sie sieht die Live-Seite völlig normal aus, nur Visual Editing funktioniert nicht, und das merkt man erst ganz am Ende. Gib dem Nutzer diesen Schritt ausdrücklich mit, getrennt von den übrigen Feldern:
+
+1. Im hPanel bei der Web-App **Environment variables** öffnen.
+2. Name `SANITY_API_READ_TOKEN`, Wert aus der lokalen `.env`. Die Datei ist auf dem Mac im Finder unsichtbar (Punkt am Anfang, einblenden mit Cmd+Shift+Punkt). Einfacher: den Wert direkt in die Zwischenablage legen, ohne ihn anzuzeigen, dann fügt der Nutzer ihn mit Cmd+V ein:
+   ```bash
+   grep '^SANITY_API_READ_TOKEN=' .env | cut -d= -f2- | tr -d '\n' | pbcopy
+   ```
+   Nach dem Eintragen die Zwischenablage leeren: `echo -n | pbcopy`.
+3. Speichern, App neu starten oder neu deployen.
+4. Prüfen, bevor es weitergeht:
+   ```bash
+   curl -s -w " (%{http_code})\n" <LIVE_URL>/api/draft-mode/enable/
+   ```
+   „Invalid secret (401)“ heißt: Token ist da. „Draft mode is not configured (500)“ heißt: Variable fehlt oder die App läuft noch mit dem alten Stand.
+
+Mit der Live-Adresse: `LIVE_URL` in `presentation.ts`, CORS, Studio neu deployen. Abschlusstest: im Online-Studio veröffentlichen und online sehen, Presentation auf der Live-Seite benutzen.
 
 ## Phase 7: Übergabe
 

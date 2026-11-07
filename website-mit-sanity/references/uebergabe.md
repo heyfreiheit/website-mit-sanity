@@ -24,6 +24,7 @@ Geh die Liste mit dem Nutzer durch. Was nicht erledigt ist, steht am Ende ausdr�
 - [ ] Online-Studio deployt, Sprache der Oberfläche und Feldnamen wie mit dem Kunden besprochen
 - [ ] jede Seite im Studio geöffnet, alle Felder gefüllt
 - [ ] Teständerung veröffentlicht, online gesehen, zurückgesetzt
+- [ ] `SANITY_API_READ_TOKEN` in der Hostinger-Web-App gesetzt (`/api/draft-mode/enable/` antwortet mit 401, nicht mit 500)
 - [ ] Visual Editing auf der Live-Adresse getestet (Presentation, Text und Foto anklicken)
 - [ ] keine offenen Entwürfe (`documents query '*[_id in path("drafts.**")]'`)
 

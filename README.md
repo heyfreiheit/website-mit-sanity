@@ -36,7 +36,9 @@ Entstanden ist das Ganze am Neubau der Seite eines Yogastudios auf den Lofoten, 
 
 Claude fragt dich kurz nach Kunde, Sprachen, Hosting und in welcher Sprache dein Kunde das Studio sehen soll. Dann baut Scrollcraft die Seite, Impeccable prüft sie und Claude behebt, was gefunden wird. Alle Texte schreibt Claude erst in eine Startdatei, damit die Seite schon läuft, bevor es Sanity überhaupt gibt. Danach legt Claude das Sanity-Projekt per Befehl an, spielt alle Inhalte samt Fotos ein und baut Visual Editing ein.
 
-An ein paar Stellen musst du selbst ran: beim Login in Sanity und GitHub, beim ersten Test im Studio und bei den Einstellungen im Hostinger-Panel. Claude sagt dir jeweils genau, was du wo eintragen musst. Schlüssel und Passwörter landen dabei nie im Chat. Den Lese-Token für die Vorschau schreibt Claude direkt in eine Datei, die nicht ins Repo kommt, und Hostinger bekommt ihn über „Import .env“.
+An ein paar Stellen musst du selbst ran: beim Login in Sanity und GitHub, beim ersten Test im Studio und bei den Einstellungen im Hostinger-Panel. Claude sagt dir jeweils genau, was du wo eintragen musst. Schlüssel und Passwörter landen dabei nie im Chat.
+
+Einen Schritt vergisst man leicht, deshalb hier extra: Deine Web-App bei Hostinger braucht die Umgebungsvariable `SANITY_API_READ_TOKEN`. Das ist der Lese-Token, mit dem die Seite im Studio auch Entwürfe zeigen kann. Ohne ihn läuft die Seite ganz normal, nur Visual Editing klappt nicht, und das merkst du erst ganz am Ende. Claude schreibt den Token in die Datei `.env` im Projektordner. Die ist auf dem Mac unsichtbar, weil sie mit einem Punkt beginnt (Cmd+Shift+Punkt blendet sie ein). Am einfachsten legt Claude dir den Wert in die Zwischenablage, und du fügst ihn in Hostinger unter „Environment variables“ ein. Danach die App einmal neu starten.
 
 ## Dateien
 

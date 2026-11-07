@@ -30,7 +30,11 @@ Den Menüpunkt „Erweitert“ und dort „Git“ im Website-Dashboard **nicht**
 
    Der Pfad im Entry file ist relativ zum Ausgabeordner, also nicht `dist/server/entry.mjs`. Ein Feld für einen Start-Befehl gibt es nicht, den Port setzt Hostinger über `PORT`.
 
-4. Unter **Environment variables** `SANITY_API_READ_TOKEN` eintragen. Am einfachsten über „Import .env“ mit der lokalen `.env`. Werte gibt der Nutzer selbst ein, nie in den Chat. Die Seite liest den Token erst beim Start (`process.env`), er steckt also nie im Build. Nach dem Eintragen die App neu starten oder neu deployen.
+4. Unter **Environment variables** unbedingt `SANITY_API_READ_TOKEN` eintragen. Ohne die Variable läuft die Seite ganz normal, nur Visual Editing nicht, deshalb wird dieser Schritt leicht vergessen. Den Wert gibt der Nutzer selbst ein, nie in den Chat.
+   - Über „Import .env“ mit der lokalen `.env`. Auf dem Mac ist die Datei im Finder und im Dateiauswahl-Fenster unsichtbar, Cmd+Shift+Punkt blendet sie ein.
+   - Oder von Hand: Name `SANITY_API_READ_TOKEN`, Wert per Zwischenablage, ohne dass er irgendwo angezeigt wird: `grep '^SANITY_API_READ_TOKEN=' .env | cut -d= -f2- | tr -d '\n' | pbcopy`. Danach `echo -n | pbcopy`.
+
+   Die Seite liest den Token erst beim Start (`process.env`), er steckt also nie im Build. Nach dem Eintragen die App neu starten oder neu deployen und mit `curl -s -w " (%{http_code})\n" <LIVE_URL>/api/draft-mode/enable/` prüfen: 401 heißt gesetzt, 500 heißt fehlt.
 5. **Deploy.** Ab jetzt baut jeder Push auf `main` neu. Inhalte aus Sanity brauchen keinen Push.
 6. Zuerst die vorläufige Hostinger-Adresse nehmen. Ist die Domain im Tarif schon als normale Website angelegt, muss diese vorher entfernt werden, sonst lässt sie sich der Web-App nicht zuweisen.
 
