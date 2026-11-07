@@ -1,0 +1,40 @@
+---
+// Visual Editing for the Sanity Studio's Presentation tab. Renders nothing for
+// normal visitors. In draft mode it shows a small "exit preview" badge and loads
+// the click-to-edit overlays on demand. An edit in the Studio reloads the page;
+// the browser keeps the scroll position.
+interface Props {
+  /** Badge text, e.g. "Vorschau mit Entwürfen · beenden" in the site's language */
+  label?: string;
+}
+const {label = 'Preview with drafts · exit'} = Astro.props;
+const draft = Astro.locals.draft === true;
+---
+{draft && (
+  <>
+    <a class="ve-badge" data-visual-editing href={`/api/draft-mode/disable/?redirect=${encodeURIComponent(Astro.url.pathname)}`}>{label}</a>
+    <style>
+      .ve-badge {
+        position: fixed; z-index: 2147483000; left: 50%; bottom: 1rem; translate: -50% 0;
+        padding: .45rem .9rem; border-radius: 999px; font: 560 12px/1.3 system-ui, sans-serif;
+        background: #15181c; color: #f4f4f2; text-decoration: none; box-shadow: 0 4px 18px rgb(0 0 0 / .25);
+      }
+    </style>
+  </>
+)}
+<script>
+  if (document.querySelector('[data-visual-editing]')) {
+    import('@sanity/visual-editing').then(({enableVisualEditing}) => {
+      let timer: number | undefined;
+      enableVisualEditing({
+        refresh: (payload) => {
+          if (payload.source !== 'mutation' && payload.source !== 'manual') return false;
+          return new Promise<void>((done) => {
+            clearTimeout(timer);
+            timer = window.setTimeout(() => { location.reload(); done(); }, 500);
+          });
+        },
+      });
+    });
+  }
+</script>
